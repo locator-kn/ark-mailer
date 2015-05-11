@@ -55,6 +55,17 @@ class Mailer {
     };
 
     private _register(server, options) {
+        // route to create new user
+        server.route({
+            method: 'GET',
+            path: '/mail/registration/{userid}',
+            config: {
+                handler: (request, reply) => {
+
+                },
+                description: 'send registration mail to new user',
+                tags: ['api', 'mailer']
+        });
         // Register
         return 'register';
     }
