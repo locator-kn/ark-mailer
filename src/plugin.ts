@@ -5,11 +5,30 @@ export interface IRegister {
 
 export default
 class Mailer {
-    constructor() {
+    transporter:any;
+
+    /**
+     * example: new Mailer('mymailaddr@whatever.jo','secret');
+     *
+     * @param user - mail address of agent
+     * @param pass - password
+     */
+    constructor(user:string, pass:string) {
         this.register.attributes = {
             name: 'ark-mailer',
             version: '0.1.0'
         };
+
+        // load nodemailer module
+        var nodemailer = require('nodemailer');
+        // create reusable transporter object using SMTP transport
+        this.transporter = nodemailer.createTransport({
+            service: 'Gmail',
+            auth: {
+                user: user,
+                pass: pass
+            }
+        });
     }
 
     register:IRegister = (server, options, next) => {
