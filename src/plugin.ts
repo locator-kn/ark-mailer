@@ -8,10 +8,16 @@ class Mailer {
     transporter:any;
 
     /**
-     * example: new Mailer('mymailaddr@whatever.jo','secret');
+     * constructor with env variable
      *
-     * @param user - mail address of agent
-     * @param pass - password
+     * @param env - environment variable:
+     *     {
+     *     "mail": {
+     *          "MAIL_ADDR": "any@gmail.com",
+     *          "MAIL_PASS": "secret",
+     *          "MAIL_SERVICE": "Gmail"
+     *          }
+     *     }
      */
     constructor(private env:any) {
         this.register.attributes = {
