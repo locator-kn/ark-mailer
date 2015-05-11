@@ -23,7 +23,7 @@ class Mailer {
         var nodemailer = require('nodemailer');
         // create reusable transporter object using SMTP transport
         this.transporter = nodemailer.createTransport({
-            service: 'Gmail',
+            service: this.env['MAIL_SERVICE'],
             auth: {
                 user: this.env['MAIL_ADDR'],
                 pass: this.env['MAIL_PASS']
