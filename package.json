@@ -10,6 +10,7 @@
   "peerDependencies": {
     "hapi": ">=8.x.x"
   },
+  "repository": "git:locator-kn/ark-user.git",
   "devDependencies": {
     "code": "1.x.x",
     "gulp": "^3.8.11",
