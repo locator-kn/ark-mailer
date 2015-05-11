@@ -40,6 +40,15 @@ class Mailer {
     register:IRegister = (server, options, next) => {
         server.bind(this);
         this._register(server, options);
+
+        server.views({
+            engines: { jade: require('jade') },
+            //  options object passed to the engine's compile function
+            compileOptions: {
+                pretty: true
+            }
+        });
+
         next();
     };
 
