@@ -43,7 +43,9 @@ class Mailer {
 
         server.views({
             engines: { jade: require('jade') },
-            //  options object passed to the engine's compile function
+            // path to jade templates
+            path: __dirname + '/templates',
+            // options object passed to the engine's compile function
             compileOptions: {
                 pretty: true
             }
