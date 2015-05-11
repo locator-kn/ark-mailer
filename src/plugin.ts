@@ -13,7 +13,7 @@ class Mailer {
      * @param user - mail address of agent
      * @param pass - password
      */
-    constructor(user:string, pass:string) {
+    constructor(private env:any) {
         this.register.attributes = {
             name: 'ark-mailer',
             version: '0.1.0'
@@ -25,8 +25,8 @@ class Mailer {
         this.transporter = nodemailer.createTransport({
             service: 'Gmail',
             auth: {
-                user: user,
-                pass: pass
+                user: this.env['MAIL_ADDR'],
+                pass: this.env['MAIL_PASS']
             }
         });
     }
