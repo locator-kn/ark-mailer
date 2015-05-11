@@ -42,7 +42,7 @@ class Mailer {
         this._register(server, options);
 
         server.views({
-            engines: { jade: require('jade') },
+            engines: {jade: require('jade')},
             // path to jade templates
             path: __dirname + '/templates',
             // options object passed to the engine's compile function
@@ -65,6 +65,7 @@ class Mailer {
                 },
                 description: 'send registration mail to new user',
                 tags: ['api', 'mailer']
+            }
         });
         // Register
         return 'register';
