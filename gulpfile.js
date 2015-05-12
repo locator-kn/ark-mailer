@@ -4,6 +4,7 @@ var merge = require('merge2');
 var notifier = require('node-notifier');
 var sourcemaps = require('gulp-sourcemaps');
 var typescript15 = require('typescript');
+var jade = require('gulp-jade');
 
 var tsProjectEmily = ts.createProject({
     declarationFiles: true,
@@ -30,6 +31,14 @@ gulp.task('ts', function() {
         tsResult.dts.pipe(gulp.dest('lib/definitions')),
         tsResult.js.pipe(gulp.dest('lib/js'))
     ]);
+});
+
+gulp.task('jade', function() {
+    return gulp.src('src/**/*.jade')
+        .pipe(jade({
+            pretty: true
+        }))
+        .pipe(gulp.dest('lib/templates'))
 });
 
 gulp.task('default', ['ts'], function() {
