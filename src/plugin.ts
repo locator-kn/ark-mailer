@@ -60,8 +60,14 @@ class Mailer {
             method: 'GET',
             path: '/mail/registration/{userid}',
             config: {
+                auth: false,
                 handler: (request, reply) => {
-
+                    // TODO: use jade for mail
+                    // return jade structure for test
+                    reply.view('registration', {
+                        title: 'registration mail',
+                        message: 'Hello World!'
+                    })
                 },
                 description: 'send registration mail to new user',
                 tags: ['api', 'mailer']
