@@ -35,10 +35,7 @@ gulp.task('ts', function() {
 
 gulp.task('jade', function() {
     return gulp.src('src/**/*.jade')
-        .pipe(jade({
-            pretty: true
-        }))
-        .pipe(gulp.dest('lib/templates'))
+        .pipe(gulp.dest('lib/js'))
 });
 
 gulp.task('default', ['ts'], function() {
