@@ -1,10 +1,10 @@
-var gulp = require('gulp');
-var ts = require('gulp-typescript');
-var merge = require('merge2');
-var notifier = require('node-notifier');
-var sourcemaps = require('gulp-sourcemaps');
-var typescript15 = require('typescript');
-var jade = require('gulp-jade');
+var gulp = require('gulp'),
+    ts = require('gulp-typescript'),
+    merge = require('merge2'),
+    notifier = require('node-notifier'),
+    sourcemaps = require('gulp-sourcemaps'),
+    typescript15 = require('typescript'),
+    jade = require('gulp-jade');
 
 var tsProjectEmily = ts.createProject({
     declarationFiles: true,
