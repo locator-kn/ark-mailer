@@ -42,6 +42,9 @@ class Mailer {
 
         // load nodemailer module
         var nodemailer = require('nodemailer');
+        // load html to text module
+        var htmlToText = require('nodemailer-html-to-text').htmlToText;
+
         // create reusable transporter object using SMTP transport
         this.transporter = nodemailer.createTransport({
             service: this.env['MAIL_SERVICE'],
@@ -50,6 +53,7 @@ class Mailer {
                 pass: this.env['MAIL_PASS']
             }
         });
+        this.transporter.use('compile', htmlToText())
     }
 
     register:IRegister = (server, options, next) => {
