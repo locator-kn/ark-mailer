@@ -3,6 +3,13 @@ export interface IRegister {
     attributes?: any;
 }
 
+export interface IUserMail {
+    name:string;
+    surname:string;
+    mail:string;
+    url:string;
+}
+
 export default
 class Mailer {
     transporter:any;
@@ -58,11 +65,10 @@ class Mailer {
         // route to create new user
         server.route({
             method: 'GET',
-            path: '/mail/registration/{userid}',
+            path: '/mail/registration/test',
             config: {
                 auth: false,
                 handler: (request, reply) => {
-                    // TODO: use jade for mail
                     // return jade structure for test
                     reply.view('registration', {
                         title: 'registration mail',
@@ -75,6 +81,20 @@ class Mailer {
         });
         // Register
         return 'register';
+    }
+
+
+    sendRegistrationMail(user:IUserMail) {
+        var mailOptions;
+        mailOptions.from = this.env['MAIL_ADDR']; // sender address
+        mailOptions.to = user.mail;
+
+        // TODO: get from database
+        mailOptions.subject = 'TODO';
+        mailOptions.text= 'TODO';
+        // TODO: jade
+        mailOptions.html= 'TODO';
+
     }
 
     errorInit(error) {
