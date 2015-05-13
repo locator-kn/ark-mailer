@@ -103,25 +103,34 @@ class Mailer {
 
 
     sendRegistrationMail(user:IUserMail) {
-        var mailOptions = IMailOptions;
-        mailOptions.from = this.env['MAIL_ADDR']; // sender address
-        mailOptions.to = user.mail;
 
-        // TODO: get from database
-        mailOptions.subject = 'TODO';
-        mailOptions.text= 'TODO';
-        // TODO: jade
-        mailOptions.html= 'TODO';
-
-
-        // send mail with defined transport object
-        this.transporter.sendMail(mailOptions, function(error, info){
-            if(error){
-                console.log(error);
-            }else{
-                console.log('Message sent: ' + info.response);
+        this.db.getRegistrationMail((err, data) => {
+            if(err) {
+                return err;
             }
+
+            // TODO: jade
+
+
+            var mailOptions = {
+                from: this.env['MAIL_ADDR'], // sender address
+                to: user.mail,
+                subject: data.subject,
+                html: "TODO"
+            };
+
+            // send mail with defined transport object
+            this.transporter.sendMail(mailOptions, function(error, info){
+                if(error){
+                    console.log(error);
+                }else{
+                    console.log('Message sent: ' + info.response);
+                }
+            });
         });
+
+
+
     }
 
     errorInit(error) {
