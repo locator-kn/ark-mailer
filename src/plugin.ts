@@ -10,6 +10,14 @@ export interface IUserMail {
     url:string;
 }
 
+interface IMailOptions {
+    from:string;
+    to:string;
+    subject:string;
+    text:string;
+    html:string;
+}
+
 export default
 class Mailer {
     transporter:any;
@@ -85,7 +93,7 @@ class Mailer {
 
 
     sendRegistrationMail(user:IUserMail) {
-        var mailOptions;
+        var mailOptions = IMailOptions;
         mailOptions.from = this.env['MAIL_ADDR']; // sender address
         mailOptions.to = user.mail;
 
@@ -95,6 +103,15 @@ class Mailer {
         // TODO: jade
         mailOptions.html= 'TODO';
 
+
+        // send mail with defined transport object
+        this.transporter.sendMail(mailOptions, function(error, info){
+            if(error){
+                console.log(error);
+            }else{
+                console.log('Message sent: ' + info.response);
+            }
+        });
     }
 
     errorInit(error) {
