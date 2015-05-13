@@ -21,6 +21,7 @@ interface IMailOptions {
 export default
 class Mailer {
     transporter:any;
+    db:any;
 
     /**
      * constructor with env variable
@@ -59,6 +60,11 @@ class Mailer {
     register:IRegister = (server, options, next) => {
         server.bind(this);
         this._register(server, options);
+
+        server.dependency('ark-database', (server, next) => {
+            this.db = server.plugins['ark-database'];
+            next();
+        });
 
         server.views({
             engines: {jade: require('jade')},
