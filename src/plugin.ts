@@ -103,27 +103,22 @@ class Mailer {
                         url: 'http://www.google.de'
                     };
                     this.sendRegistrationMail(user, (err, data) => {
-                        if(err) {
+                        if (err) {
                             reply(err);
                         }
                         reply(data);
                     })
-                }
-
-                ,
-                description: 'send registration mail to new user'
-                ,
+                },
+                description: 'send registration mail to new user',
                 tags: ['api', 'mailer']
             }
-        })
-        ;
-    // Register
+        });
+        // Register
         return 'register';
     }
 
 
     sendRegistrationMail(user:IUserMail, callback) {
-        console.log('in send registration mail');
         this.db.getRegistrationMail((err, data) => {
             if (err) {
                 console.log('error');
@@ -131,14 +126,15 @@ class Mailer {
             }
 
             // renderFile
-            var html = this.jade.renderFile(__dirname + '/templates/registration.jade');
+            var fn = this.jade.compileFile(__dirname + '/templates/registration.jade');
+
+            var html = fn(data[0]);
             var mailOptions = {
                 from: this.env['MAIL_ADDR'], // sender address
                 to: user.mail,
-                subject: data.subject,
+                subject: data[0].title,
                 html: html
             };
-            console.log(mailOptions);
 
             // send mail with defined transport object
             this.transporter.sendMail(mailOptions, function (error, info) {
@@ -150,9 +146,6 @@ class Mailer {
                 }
             });
         });
-
-
-
     }
 
     errorInit(error) {
