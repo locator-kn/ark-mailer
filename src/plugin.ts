@@ -22,6 +22,7 @@ export default
 class Mailer {
     transporter:any;
     db:any;
+    jade:any;
 
     /**
      * constructor with env variable
@@ -41,6 +42,8 @@ class Mailer {
             version: '0.1.0'
         };
 
+        // load jade module
+        this.jade = require('jade');
         // load nodemailer module
         var nodemailer = require('nodemailer');
         // load html to text module
@@ -88,42 +91,61 @@ class Mailer {
                 auth: false,
                 handler: (request, reply) => {
                     // return jade structure for test
-                    reply.view('registration', {
-                        title: 'registration mail',
-                        message: 'Hello World!'
+                    //reply.view('registration', {
+                    //    title: 'registration mail',
+                    //    message: 'Hello World!'
+                    //})
+
+                    var user = {
+                        name: 'Udo',
+                        surname: 'Franz',
+                        mail: 'ruprecht.t@gmx.de',
+                        url: 'http://www.google.de'
+                    };
+                    this.sendRegistrationMail(user, (err, data) => {
+                        if(err) {
+                            reply(err);
+                        }
+                        reply(data);
                     })
-                },
-                description: 'send registration mail to new user',
+                }
+
+                ,
+                description: 'send registration mail to new user'
+                ,
                 tags: ['api', 'mailer']
             }
-        });
-        // Register
+        })
+        ;
+    // Register
         return 'register';
     }
 
 
-    sendRegistrationMail(user:IUserMail) {
-
+    sendRegistrationMail(user:IUserMail, callback) {
+        console.log('in send registration mail');
         this.db.getRegistrationMail((err, data) => {
-            if(err) {
+            if (err) {
+                console.log('error');
                 return err;
             }
 
-            // TODO: jade
-
-
+            // renderFile
+            var html = this.jade.renderFile(__dirname + '/templates/registration.jade');
             var mailOptions = {
                 from: this.env['MAIL_ADDR'], // sender address
                 to: user.mail,
                 subject: data.subject,
-                html: "TODO"
+                html: html
             };
+            console.log(mailOptions);
 
             // send mail with defined transport object
-            this.transporter.sendMail(mailOptions, function(error, info){
-                if(error){
-                    console.log(error);
-                }else{
+            this.transporter.sendMail(mailOptions, function (error, info) {
+                if (error) {
+                    callback(error);
+                } else {
+                    callback(null, info.response);
                     console.log('Message sent: ' + info.response);
                 }
             });
