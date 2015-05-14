@@ -121,24 +121,28 @@ class Mailer {
     sendRegistrationMail(user:IUserMail, callback) {
         this.db.getRegistrationMail((err, data) => {
             if (err) {
-                console.log('error');
                 return err;
             }
+
+            // add user to content variable to get user information in email template
+            var content = data[0];
+            content.user = user;
 
             // renderFile
             var fn = this.jade.compileFile(__dirname + '/templates/registration.jade');
 
-            var html = fn(data[0]);
+            var html = fn(content);
             var mailOptions = {
                 from: this.env['MAIL_ADDR'], // sender address
                 to: user.mail,
-                subject: data[0].title,
+                subject: content.title,
                 html: html
             };
 
             // send mail with defined transport object
             this.transporter.sendMail(mailOptions, function (error, info) {
                 if (error) {
+                    // TODO: logger
                     callback(error);
                 } else {
                     callback(null, info.response);
