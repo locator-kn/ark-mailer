@@ -10,14 +10,6 @@ export interface IUserMail {
     url:string;
 }
 
-interface IMailOptions {
-    from:string;
-    to:string;
-    subject:string;
-    text:string;
-    html:string;
-}
-
 export default
 class Mailer {
     transporter:any;
@@ -90,15 +82,9 @@ class Mailer {
             config: {
                 auth: false,
                 handler: (request, reply) => {
-                    // return jade structure for test
-                    //reply.view('registration', {
-                    //    title: 'registration mail',
-                    //    message: 'Hello World!'
-                    //})
-
                     var user = {
                         name: 'Udo',
-                        surname: 'Franz',
+                        surname: 'Walter',
                         mail: 'ruprecht.t@gmx.de',
                         url: 'http://www.google.de'
                     };
@@ -118,10 +104,16 @@ class Mailer {
     }
 
 
+    /**
+     * Sends a registration mail to a new user.
+     * @param user
+     * @param callback
+     */
     sendRegistrationMail(user:IUserMail, callback) {
+        // get mail text from database
         this.db.getRegistrationMail((err, data) => {
             if (err) {
-                return err;
+                callback(err);
             }
 
             // add user to content variable to get user information in email template
@@ -130,8 +122,9 @@ class Mailer {
 
             // renderFile
             var fn = this.jade.compileFile(__dirname + '/templates/registration.jade');
-
+            // parse content to jade file to get a html template
             var html = fn(content);
+            // setup mail options
             var mailOptions = {
                 from: this.env['MAIL_ADDR'], // sender address
                 to: user.mail,
