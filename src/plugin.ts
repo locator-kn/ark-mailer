@@ -52,9 +52,19 @@ class Mailer {
         this.transporter.use('compile', htmlToText())
     }
 
+    /**
+     * exposes functions to other plugins
+     * @param server
+     */
+    exportApi(server) {
+        server.expose('sendRegistrationMail', this.sendRegistrationMail);
+
+    }
+
     register:IRegister = (server, options, next) => {
         server.bind(this);
         this._register(server, options);
+        this.exportApi(server);
 
         server.dependency('ark-database', (server, next) => {
             this.db = server.plugins['ark-database'];
@@ -88,12 +98,7 @@ class Mailer {
                         mail: 'ruprecht.t@gmx.de',
                         url: 'http://www.google.de'
                     };
-                    this.sendRegistrationMail(user, (err, data) => {
-                        if (err) {
-                            reply(err);
-                        }
-                        reply(data);
-                    })
+                    this.sendRegistrationMail(user);
                 },
                 description: 'send registration mail to new user',
                 tags: ['api', 'mailer']
@@ -109,11 +114,11 @@ class Mailer {
      * @param user
      * @param callback
      */
-    sendRegistrationMail(user:IUserMail, callback) {
+    sendRegistrationMail(user:IUserMail) {
         // get mail text from database
         this.db.getRegistrationMail((err, data) => {
             if (err) {
-                callback(err);
+                console.log(err);
             }
 
             // add user to content variable to get user information in email template
@@ -135,10 +140,8 @@ class Mailer {
             // send mail with defined transport object
             this.transporter.sendMail(mailOptions, function (error, info) {
                 if (error) {
-                    // TODO: logger
-                    callback(error);
+                    console.log(error);
                 } else {
-                    callback(null, info.response);
                     console.log('Message sent: ' + info.response);
                 }
             });
