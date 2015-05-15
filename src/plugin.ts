@@ -5,7 +5,6 @@ export interface IRegister {
 
 export interface IUserMail {
     name:string;
-    surname:string;
     mail:string;
     url:string;
 }
@@ -114,7 +113,7 @@ class Mailer {
      * @param user
      * @param callback
      */
-    sendRegistrationMail(user:IUserMail) {
+    sendRegistrationMail = (user:IUserMail) => {
         // get mail text from database
         this.db.getRegistrationMail((err, data) => {
             if (err) {
@@ -146,7 +145,7 @@ class Mailer {
                 }
             });
         });
-    }
+    };
 
     errorInit(error) {
         if (error) {
