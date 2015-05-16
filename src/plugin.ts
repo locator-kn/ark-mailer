@@ -99,7 +99,6 @@ class Mailer {
     /**
      * Sends a registration mail to a new user.
      * @param user
-     * @param callback
      */
     sendRegistrationMail = (user:IUserMail) => {
         // get mail text from database
@@ -134,10 +133,4 @@ class Mailer {
             });
         });
     };
-
-    errorInit(error) {
-        if (error) {
-            console.log('Error: Failed to load plugin (Mailer):', error);
-        }
-    }
 }
