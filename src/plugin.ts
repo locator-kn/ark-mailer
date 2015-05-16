@@ -68,17 +68,6 @@ class Mailer {
             this.db = server.plugins['ark-database'];
             next();
         });
-
-        server.views({
-            engines: {jade: require('jade')},
-            // path to jade templates
-            path: __dirname + '/templates',
-            // options object passed to the engine's compile function
-            compileOptions: {
-                pretty: true
-            }
-        });
-
         next();
     };
 
