@@ -29,8 +29,7 @@ class Mailer {
      */
     constructor(private env:any) {
         this.register.attributes = {
-            name: 'ark-mailer',
-            version: '0.1.0'
+            pkg: require('./../../package.json')
         };
 
         // load jade module
