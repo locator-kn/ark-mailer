@@ -112,7 +112,7 @@ class Mailer {
             }
 
             // add user to content variable to get user information in email template
-            var content = data[0];
+            var content = data;
             content.user = user;
             content.user.url = this.uri + '/users/confirm/' + user.uuid;
 
