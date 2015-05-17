@@ -14,6 +14,7 @@ class Mailer {
     transporter:any;
     db:any;
     jade:any;
+    uri:any;
 
     /**
      * constructor with env variable
@@ -28,10 +29,13 @@ class Mailer {
      *     }
      *  @param uri - url to web-application
      */
-    constructor(private env:any, private uri:string) {
+    constructor(private env:any, uri:string) {
         this.register.attributes = {
             pkg: require('./../../package.json')
         };
+
+        // location of web-app
+        this.uri = uri;
 
         // load jade module
         this.jade = require('jade');
@@ -82,9 +86,8 @@ class Mailer {
                 handler: (request, reply) => {
                     var user = {
                         name: 'Udo',
-                        surname: 'Walter',
                         mail: 'ruprecht.t@gmx.de',
-                        url: 'http://www.google.de'
+                        uuid: 'http://www.google.de'
                     };
                     this.sendRegistrationMail(user);
                 },
