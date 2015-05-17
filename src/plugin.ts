@@ -114,6 +114,7 @@ class Mailer {
             // add user to content variable to get user information in email template
             var content = data[0];
             content.user = user;
+            content.user.url = this.uri + '/users/confirm/' + user.uuid;
 
             // renderFile
             var fn = this.jade.compileFile(__dirname + '/templates/registration.jade');
@@ -122,7 +123,7 @@ class Mailer {
             // setup mail options
             var mailOptions = {
                 from: this.env['MAIL_ADDR'], // sender address
-                to: this.uri + '/users/confirm/' + user.uuid,
+                to: user.mail,
                 subject: content.title,
                 html: html
             };
