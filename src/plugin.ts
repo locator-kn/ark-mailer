@@ -6,7 +6,7 @@ export interface IRegister {
 export interface IUserMail {
     name:string;
     mail:string;
-    url:string;
+    uuid:string;
 }
 
 export default
@@ -14,6 +14,7 @@ class Mailer {
     transporter:any;
     db:any;
     jade:any;
+    uri:any;
 
     /**
      * constructor with env variable
@@ -26,11 +27,15 @@ class Mailer {
      *          "MAIL_SERVICE": "Gmail"
      *          }
      *     }
+     *  @param uri - url to web-application
      */
-    constructor(private env:any) {
+    constructor(private env:any, uri:string) {
         this.register.attributes = {
             pkg: require('./../../package.json')
         };
+
+        // location of web-app
+        this.uri = uri;
 
         // load jade module
         this.jade = require('jade');
@@ -72,25 +77,6 @@ class Mailer {
     };
 
     private _register(server, options) {
-        // route to create new user
-        server.route({
-            method: 'GET',
-            path: '/mail/registration/test',
-            config: {
-                auth: false,
-                handler: (request, reply) => {
-                    var user = {
-                        name: 'Udo',
-                        surname: 'Walter',
-                        mail: 'ruprecht.t@gmx.de',
-                        url: 'http://www.google.de'
-                    };
-                    this.sendRegistrationMail(user);
-                },
-                description: 'send registration mail to new user',
-                tags: ['api', 'mailer']
-            }
-        });
         // Register
         return 'register';
     }
@@ -108,8 +94,9 @@ class Mailer {
             }
 
             // add user to content variable to get user information in email template
-            var content = data[0];
+            var content = data;
             content.user = user;
+            content.user.url = this.uri + '/users/confirm/' + user.uuid;
 
             // renderFile
             var fn = this.jade.compileFile(__dirname + '/templates/registration.jade');
