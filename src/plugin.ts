@@ -77,24 +77,6 @@ class Mailer {
     };
 
     private _register(server, options) {
-        // route to create new user
-        server.route({
-            method: 'GET',
-            path: '/mail/registration/test',
-            config: {
-                auth: false,
-                handler: (request, reply) => {
-                    var user = {
-                        name: 'Udo',
-                        mail: 'ruprecht.t@gmx.de',
-                        uuid: 'http://www.google.de'
-                    };
-                    this.sendRegistrationMail(user);
-                },
-                description: 'send registration mail to new user',
-                tags: ['api', 'mailer']
-            }
-        });
         // Register
         return 'register';
     }
