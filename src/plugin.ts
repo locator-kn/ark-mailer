@@ -26,6 +26,7 @@ class Mailer {
      *          "MAIL_SERVICE": "Gmail"
      *          }
      *     }
+     *  @param uri - url to web-application
      */
     constructor(private env:any, private uri:string) {
         this.register.attributes = {
