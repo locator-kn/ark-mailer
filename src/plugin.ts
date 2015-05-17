@@ -6,7 +6,7 @@ export interface IRegister {
 export interface IUserMail {
     name:string;
     mail:string;
-    url:string;
+    uuid:string;
 }
 
 export default
@@ -27,7 +27,7 @@ class Mailer {
      *          }
      *     }
      */
-    constructor(private env:any) {
+    constructor(private env:any, private uri:string) {
         this.register.attributes = {
             pkg: require('./../../package.json')
         };
@@ -118,7 +118,7 @@ class Mailer {
             // setup mail options
             var mailOptions = {
                 from: this.env['MAIL_ADDR'], // sender address
-                to: user.mail,
+                to: this.uri + '/users/confirm/' + user.uuid,
                 subject: content.title,
                 html: html
             };
