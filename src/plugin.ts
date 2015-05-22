@@ -122,6 +122,12 @@ class Mailer {
     };
 
     sendPasswordForgottenMail = () => {
+
+        this.db.getPasswordForgottenMail((err, data) => {
+            if(err){
+                console.log(err);
+            }
+        });
         // TODO get text from database
         // TODO get user information
         // TODO render file
