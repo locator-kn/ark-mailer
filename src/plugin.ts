@@ -120,4 +120,12 @@ class Mailer {
             });
         });
     };
+
+    sendPasswordForgottenMail = () => {
+        // TODO get text from database
+        // TODO get user information
+        // TODO render file
+        // TODO set mail options
+        // TODO send mail
+    }
 }
