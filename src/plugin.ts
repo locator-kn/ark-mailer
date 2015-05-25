@@ -99,18 +99,18 @@ class Mailer {
             content.user.url = this.uri + '/users/confirm/' + user.uuid;
 
             // renderFile
-            this.renderAndSendMail(content, user, '/templates/registration.jade');
+            this.renderAndSendMail(content, '/templates/registration.jade');
         });
     };
 
-    private renderAndSendMail(content, user, template) {
+    private renderAndSendMail(content, template) {
         var fn = this.jade.compileFile(__dirname + template);
         // parse content to jade file to get a html template
         var html = fn(content);
         // setup mail options
         var mailOptions = {
             from: this.env['MAIL_ADDR'], // sender address
-            to: user.mail,
+            to: content.user.mail,
             subject: content.title,
             html: html
         };
@@ -136,7 +136,7 @@ class Mailer {
             var content = data;
             content.user = user;
 
-            this.renderAndSendMail(content, user, '/templates/passwordForgotten.jade');
+            this.renderAndSendMail(content, '/templates/passwordForgotten.jade');
         });
     }
 }
