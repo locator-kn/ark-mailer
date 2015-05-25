@@ -132,10 +132,11 @@ class Mailer {
                 console.log(err);
             }
 
+            // add user to content variable to get user information in email template
+            var content = data;
+            content.user = user;
+
+            this.renderAndSendMail(content, user, '/templates/passwordForgotten.jade');
         });
-        // TODO get user information
-        // TODO render file
-        // TODO set mail options
-        // TODO send mail
     }
 }
