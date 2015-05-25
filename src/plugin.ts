@@ -61,6 +61,7 @@ class Mailer {
      */
     exportApi(server) {
         server.expose('sendRegistrationMail', this.sendRegistrationMail);
+        server.expose('sendPasswordForgottenMail', this.sendPasswordForgottenMail);
 
     }
 
@@ -121,14 +122,16 @@ class Mailer {
         });
     };
 
-    sendPasswordForgottenMail = () => {
-
+    sendPasswordForgottenMail = (user) => {
+        // get text from database
         this.db.getPasswordForgottenMail((err, data) => {
             if(err){
                 console.log(err);
             }
+
+
+
         });
-        // TODO get text from database
         // TODO get user information
         // TODO render file
         // TODO set mail options
