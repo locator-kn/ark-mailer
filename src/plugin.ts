@@ -62,7 +62,6 @@ class Mailer {
     exportApi(server) {
         server.expose('sendRegistrationMail', this.sendRegistrationMail);
         server.expose('sendPasswordForgottenMail', this.sendPasswordForgottenMail);
-
     }
 
     register:IRegister = (server, options, next) => {
@@ -100,27 +99,31 @@ class Mailer {
             content.user.url = this.uri + '/users/confirm/' + user.uuid;
 
             // renderFile
-            var fn = this.jade.compileFile(__dirname + '/templates/registration.jade');
-            // parse content to jade file to get a html template
-            var html = fn(content);
-            // setup mail options
-            var mailOptions = {
-                from: this.env['MAIL_ADDR'], // sender address
-                to: user.mail,
-                subject: content.title,
-                html: html
-            };
-
-            // send mail with defined transport object
-            this.transporter.sendMail(mailOptions, function (error, info) {
-                if (error) {
-                    console.log(error);
-                } else {
-                    console.log('Message sent: ' + info.response);
-                }
-            });
+            this.renderAndSendMail(content, user, '/templates/registration.jade');
         });
     };
+
+    private renderAndSendMail(content, user, template) {
+        var fn = this.jade.compileFile(__dirname + template);
+        // parse content to jade file to get a html template
+        var html = fn(content);
+        // setup mail options
+        var mailOptions = {
+            from: this.env['MAIL_ADDR'], // sender address
+            to: user.mail,
+            subject: content.title,
+            html: html
+        };
+
+        // send mail with defined transport object
+        this.transporter.sendMail(mailOptions, function (error, info) {
+            if (error) {
+                console.log(error);
+            } else {
+                console.log('Message sent: ' + info.response);
+            }
+        });
+    }
 
     sendPasswordForgottenMail = (user) => {
         // get text from database
@@ -128,8 +131,6 @@ class Mailer {
             if(err){
                 console.log(err);
             }
-
-
 
         });
         // TODO get user information
