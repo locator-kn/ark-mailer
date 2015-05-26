@@ -3,8 +3,6 @@ extends layout
 block content
     p #{greeting} #{user.name}
     p= text
-    p= infos
-    p= mail #{user.mail}
-    p= password #{user.resetPasswordToken}
-    a(href=loginurl) #{logintext}
+    p= linktext
+    a(href=user.url) #{user.url}
     p= grussformel
