@@ -61,6 +61,7 @@ class Mailer {
      */
     exportApi(server) {
         server.expose('sendRegistrationMail', this.sendRegistrationMail);
+        server.expose('sendVerifyMail', this.sendVerifyMail);
 
     }
 
@@ -91,6 +92,8 @@ class Mailer {
         this.db.getRegistrationMail((err, data) => {
             if (err) {
                 console.log(err);
+                //TODO: inform someone
+                return;
             }
 
             // add user to content variable to get user information in email template
@@ -120,4 +123,30 @@ class Mailer {
             });
         });
     };
+
+    sendVerifyMail = (user:IUserMail) => {
+
+        var content;
+        content.user = {};
+        content.user.url = this.uri + '/users/verify/' + user.uuid;
+        // renderFile
+        var fn = this.jade.compileFile(__dirname + '/templates/verify.jade');
+        // parse content to jade file to get a html template
+        var html = fn(content);
+
+        var mailOptions = {
+            from: this.env['MAIL_ADDR'], // sender address
+            to: user.mail,
+            subject: content.title,
+            html: html
+        };
+
+        this.transporter.sendMail(mailOptions, function (error, info) {
+            if (error) {
+                console.log(error);
+            } else {
+                console.log('Message sent: ' + info.response);
+            }
+        });
+    }
 }
