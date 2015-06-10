@@ -91,6 +91,7 @@ class Mailer {
         this.db.getRegistrationMail((err, data) => {
             if (err) {
                 console.log(err);
+                return;
             }
 
             // add user to content variable to get user information in email template
@@ -130,6 +131,7 @@ class Mailer {
         this.db.getPasswordForgottenMail((err, data) => {
             if(err){
                 console.log(err);
+                return;
             }
 
             // add user to content variable to get user information in email template
