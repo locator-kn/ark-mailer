@@ -121,18 +121,18 @@ class Mailer {
                 subject: 'howdy ' + user.name + '!',
                 html: mail
             };
-            //this.mailgun.messages().send(mail, (err, result) => {
-            //    if(err) {
-            //        console.error('Error while sending registration');
-            //        return
-            //    }
-            //    console.log('registration send to ', user)
-            //})
+            this.mailgun.messages().send(data, (err, result) => {
+                if(err) {
+                    console.error('Error while sending password', err);
+                    return
+                }
+                console.log('password send to ', user)
+            })
         }).catch(err => console.error(err));
 
     };
 
-    getRenderedMail = (mail:String, user:IUserMail) => {
+    getRenderedMail = (mail:String, user) => {
         return new Promise((resolve, reject)=> {
             fs.readFile(mail, 'utf-8', (err, result) => {
                 if (err) {
@@ -141,7 +141,8 @@ class Mailer {
 
                 var compiled = _.template(result)({
                     'mail': user.mail,
-                    'name': user.name
+                    'name': user.name,
+                    'password': user.resetPassword
                 });
 
                 resolve(compiled);
