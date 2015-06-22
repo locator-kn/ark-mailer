@@ -3,8 +3,7 @@ var gulp = require('gulp'),
     merge = require('merge2'),
     notifier = require('node-notifier'),
     sourcemaps = require('gulp-sourcemaps'),
-    typescript15 = require('typescript'),
-    jade = require('gulp-jade');
+    typescript15 = require('typescript')
 
 var tsProjectEmily = ts.createProject({
     declarationFiles: true,
@@ -33,11 +32,11 @@ gulp.task('ts', function() {
     ]);
 });
 
-gulp.task('jade', function() {
-    return gulp.src('src/**/*.jade')
+gulp.task('template', function() {
+    return gulp.src('src/**/*.html')
         .pipe(gulp.dest('lib/js'))
 });
 
-gulp.task('default', ['ts'], function() {
+gulp.task('default', ['ts','template'], function() {
 
 });

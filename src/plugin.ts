@@ -1,3 +1,4 @@
+declare var Promise;
 export interface IRegister {
     (server:any, options:any, next:any): void;
     attributes?: any;
@@ -9,12 +10,18 @@ export interface IUserMail {
     uuid:string;
 }
 
+// filesystem & utility
+var fs = require('fs');
+var _ = require('lodash');
+var path = require('path')
+
 export default
 class Mailer {
-    transporter:any;
     db:any;
-    jade:any;
-    uri:any;
+    mailgun:any;
+    mailOptions:any = {};
+    REGISTRATION_MAIL:string;
+    PASSWORD_FORGOTTEN:string;
 
     /**
      * constructor with env variable
@@ -29,30 +36,27 @@ class Mailer {
      *     }
      *  @param uri - url to web-application
      */
-    constructor(private env:any, uri:string) {
+    constructor(private env:any) {
         this.register.attributes = {
             pkg: require('./../../package.json')
         };
 
-        // location of web-app
-        this.uri = uri;
 
-        // load jade module
-        this.jade = require('jade');
-        // load nodemailer module
-        var nodemailer = require('nodemailer');
-        // load html to text module
-        var htmlToText = require('nodemailer-html-to-text').htmlToText;
+        if (!env) {
+            throw new Error('env is required');
+        }
 
-        // create reusable transporter object using SMTP transport
-        this.transporter = nodemailer.createTransport({
-            service: this.env['MAIL_SERVICE'],
-            auth: {
-                user: this.env['MAIL_ADDR'],
-                pass: this.env['MAIL_PASS']
-            }
-        });
-        this.transporter.use('compile', htmlToText())
+        this.mailOptions = env;
+
+        // sender
+        this.mailOptions.from = 'Locator Team <team@' + env.DOMAIN + '>';
+
+        this.mailgun = require('mailgun-js')({apiKey: env.API_KEY, domain: env.DOMAIN});
+
+        this.REGISTRATION_MAIL = path.resolve(__dirname, './templates/registration.html');
+        this.PASSWORD_FORGOTTEN = path.resolve(__dirname, './templates/passwordForget.html')
+
+
     }
 
     /**
@@ -77,7 +81,6 @@ class Mailer {
     };
 
     private _register(server, options) {
-        // Register
         return 'register';
     }
 
@@ -87,58 +90,63 @@ class Mailer {
      * @param user
      */
     sendRegistrationMail = (user:IUserMail) => {
-        // get mail text from database
-        this.db.getRegistrationMail((err, data) => {
-            if (err) {
-                console.log(err);
-                return;
-            }
+        // get mail
+        this.getRenderedMail(this.REGISTRATION_MAIL, user).then(mail => {
+            var data = {
+                from: this.mailOptions.from,
+                to: user.mail,
+                subject: 'howdy ' + user.name + '!',
+                html: mail
+            };
 
-            // add user to content variable to get user information in email template
-            var content = data;
-            content.user = user;
-            content.user.url = this.uri + '/users/confirm/' + user.uuid;
+            this.mailgun.messages().send(data, (err, result) => {
+                if (err) {
+                    console.error('Error while sending registration',err);
+                    return
+                }
+                console.log('registration send to ', user)
+            })
 
-            // renderFile
-            this.renderAndSendMail(content, '/templates/registration.jade');
-        });
+        }).catch(err => console.error(err));
+
     };
 
-    private renderAndSendMail(content, template) {
-        var fn = this.jade.compileFile(__dirname + template);
-        // parse content to jade file to get a html template
-        var html = fn(content);
-        // setup mail options
-        var mailOptions = {
-            from: this.env['MAIL_ADDR'], // sender address
-            to: content.user.mail,
-            subject: content.title,
-            html: html
-        };
 
-        // send mail with defined transport object
-        this.transporter.sendMail(mailOptions, function (error, info) {
-            if (error) {
-                console.log(error);
-            } else {
-                console.log('Message sent: ' + info.response);
-            }
+    sendPasswordForgottenMail = (user:IUserMail) => {
+
+        this.getRenderedMail(this.PASSWORD_FORGOTTEN, user).then(mail => {
+            var data = {
+                from: this.mailOptions.from,
+                to: user.mail,
+                subject: 'howdy ' + user.name + '!',
+                html: mail
+            };
+            //this.mailgun.messages().send(mail, (err, result) => {
+            //    if(err) {
+            //        console.error('Error while sending registration');
+            //        return
+            //    }
+            //    console.log('registration send to ', user)
+            //})
+        }).catch(err => console.error(err));
+
+    };
+
+    getRenderedMail = (mail:String, user:IUserMail) => {
+        return new Promise((resolve, reject)=> {
+            fs.readFile(mail, 'utf-8', (err, result) => {
+                if (err) {
+                    return reject('Unable to read mail template');
+                }
+
+                var compiled = _.template(result)({
+                    'mail': user.mail,
+                    'name': user.name
+                });
+
+                resolve(compiled);
+
+            });
         });
-    }
-
-    sendPasswordForgottenMail = (user) => {
-        // get text from database
-        this.db.getPasswordForgottenMail((err, data) => {
-            if(err){
-                console.log(err);
-                return;
-            }
-
-            // add user to content variable to get user information in email template
-            var content = data;
-            content.user = user;
-
-            this.renderAndSendMail(content, '/templates/passwordForgotten.jade');
-        });
-    }
+    };
 }

@@ -5,7 +5,7 @@
   "main": "index.js",
   "scripts": {
     "test": "make test-cov",
-    "postinstall": "tsd reinstall && gulp ts && gulp jade"
+    "postinstall": "tsd reinstall && gulp ts && gulp template"
   },
   "peerDependencies": {
     "hapi": ">=8.x.x"
@@ -26,10 +26,9 @@
     "node-notifier": "^4.1.2"
   },
   "dependencies": {
-    "gulp-jade": "^1.0.0",
-    "jade": "^1.9.2",
-    "nodemailer": "^1.3.4",
-    "nodemailer-html-to-text": "^1.0.1",
+    "lodash": "^3.9.3",
+    "mailgun-js": "^0.7.0",
+    "path": "^0.11.14",
     "tsd": "^0.6.0",
     "typescript": "^1.5.0-alpha"
   }
