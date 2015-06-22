@@ -1,6 +1,6 @@
 {
   "name": "ark-mailer",
-  "version": "1.2.0",
+  "version": "1.3.0",
   "description": "Mail notification service",
   "main": "index.js",
   "scripts": {
