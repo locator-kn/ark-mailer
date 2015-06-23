@@ -21,7 +21,8 @@ class Mailer {
     mailgun:any;
     mailOptions:any = {};
     REGISTRATION_MAIL:string;
-    PASSWORD_FORGOTTEN:string;
+    PASSWORD_FORGOTTEN_MAIL:string;
+    REGISTRATION_MAIL_WITH_PASSWORT:string;
 
     /**
      * constructor with env variable
@@ -54,8 +55,8 @@ class Mailer {
         this.mailgun = require('mailgun-js')({apiKey: env.API_KEY, domain: env.DOMAIN});
 
         this.REGISTRATION_MAIL = path.resolve(__dirname, './templates/registration.html');
-        this.PASSWORD_FORGOTTEN = path.resolve(__dirname, './templates/passwordForget.html')
-
+        this.PASSWORD_FORGOTTEN_MAIL = path.resolve(__dirname, './templates/passwordForget.html');
+        this.REGISTRATION_MAIL_WITH_PASSWORT = path.resolve(__dirname, './templates/registrationWithPassword.html');
 
     }
 
@@ -66,6 +67,7 @@ class Mailer {
     exportApi(server) {
         server.expose('sendRegistrationMail', this.sendRegistrationMail);
         server.expose('sendPasswordForgottenMail', this.sendPasswordForgottenMail);
+        server.expose('sendRegistrationMailWithPassword', this.sendRegistrationMailWithPassword)
     }
 
     register:IRegister = (server, options, next) => {
@@ -91,61 +93,97 @@ class Mailer {
      */
     sendRegistrationMail = (user:IUserMail) => {
         // get mail
-        this.getRenderedMail(this.REGISTRATION_MAIL, user).then(mail => {
-            var data = {
-                from: this.mailOptions.from,
-                to: user.mail,
-                subject: 'howdy ' + user.name + '!',
-                html: mail
-            };
+        this.getRenderedMail(this.REGISTRATION_MAIL, {
+                'mail': user.mail,
+                'name': user.name
+            }
+        ).then(mail => {
+                var data = {
+                    from: this.mailOptions.from,
+                    to: user.mail,
+                    subject: 'howdy ' + user.name + '!',
+                    html: mail
+                };
 
-            this.mailgun.messages().send(data, (err, result) => {
-                if (err) {
-                    console.error('Error while sending registration',err);
-                    return
-                }
-                console.log('registration send to ', user)
-            })
+                this.mailgun.messages().send(data, (err, result) => {
+                    if (err) {
+                        console.error('Error while sending registration', err);
+                        return
+                    }
+                    console.log('registration send to ', user)
+                })
 
-        }).catch(err => console.error(err));
+            }
+        ).catch(err => console.error(err));
 
     };
 
 
-    sendPasswordForgottenMail = (user:IUserMail) => {
+    sendPasswordForgottenMail = (user) => {
 
-        this.getRenderedMail(this.PASSWORD_FORGOTTEN, user).then(mail => {
-            var data = {
-                from: this.mailOptions.from,
-                to: user.mail,
-                subject: 'howdy ' + user.name + '!',
-                html: mail
-            };
-            this.mailgun.messages().send(data, (err, result) => {
-                if(err) {
-                    console.error('Error while sending password', err);
-                    return
-                }
-                console.log('password send to ', user)
-            })
-        }).catch(err => console.error(err));
+        this.getRenderedMail(this.PASSWORD_FORGOTTEN_MAIL, {
+                'mail': user.mail,
+                'name': user.name,
+                'password': user.resetPassword
+            }
+        ).then(mail => {
+                var data = {
+                    from: this.mailOptions.from,
+                    to: user.mail,
+                    subject: 'howdy ' + user.name + '!',
+                    html: mail
+                };
+                this.mailgun.messages().send(data, (err, result) => {
+                    if (err) {
+                        console.error('Error while sending password', err);
+                        return
+                    }
+                    console.log('password send to ', user)
+                })
+            }
+        ).catch(err => console.error(err));
+
+    };
+
+    sendRegistrationMailWithPassword = (user) => {
+        // get mail
+        this.getRenderedMail(this.REGISTRATION_MAIL_WITH_PASSWORT, {
+                'mail': user.mail,
+                'name': user.name,
+                'password': user.password
+            }
+        ).then(mail => {
+                var data = {
+                    from: this.mailOptions.from,
+                    to: user.mail,
+                    subject: 'howdy ' + user.name + '!',
+                    html: mail
+                };
+
+                this.mailgun.messages().send(data, (err, result) => {
+                    if (err) {
+                        console.error('Error while sending registration with password', err);
+                        return
+                    }
+                    console.log('registration with password send to ', user)
+                })
+
+            }
+        ).catch(err => console.error(err));
 
     };
 
     getRenderedMail = (mail:String, user) => {
         return new Promise((resolve, reject)=> {
-            fs.readFile(mail, 'utf-8', (err, result) => {
+            fs.readFile(mail, 'utf-8', (err, template) => {
                 if (err) {
                     return reject('Unable to read mail template');
                 }
 
-                var compiled = _.template(result)({
-                    'mail': user.mail,
-                    'name': user.name,
-                    'password': user.resetPassword
-                });
+                var compiled = _.template(template);
+                var renderedMail = compiled(user);
 
-                resolve(compiled);
+                resolve(renderedMail);
 
             });
         });
