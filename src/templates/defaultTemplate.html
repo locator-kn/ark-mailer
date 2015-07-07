@@ -6,13 +6,12 @@
     <meta http-equiv="Content-Type" content="text/html; charset=UTF-8"/>
     <title>Ahoi <%= name %></title>
     <style>
-        /* -------------------------------------
-    GLOBAL
-    A very basic CSS reset
-------------------------------------- */
+
+        @import url(http://fonts.googleapis.com/css?family=Signika:400,700,600,300);
+
         * {
             margin: 0;
-            font-family: "Helvetica Neue", Helvetica, Arial, sans-serif;
+            font-family: 'Signika', sans-serif;
             box-sizing: border-box;
             font-size: 14px;
         }
@@ -76,7 +75,7 @@
         }
 
         .content-block {
-            padding: 15px;
+            padding: 20px 40px 20px 40px;
         }
 
         .header {
@@ -100,7 +99,6 @@
             TYPOGRAPHY
         ------------------------------------- */
         h1, h2, h3 {
-            font-family: "Helvetica Neue", Helvetica, Arial, "Lucida Grande", sans-serif;
             color: #000;
             margin: 10px 0 0;
             line-height: 1.2em;
@@ -108,8 +106,9 @@
         }
 
         h1 {
-            font-size: 32px;
+            font-size: 24px;
             font-weight: 500;
+            line-height: 34px;
             /* 1.2em * 32px = 38.4px, use px to get airier line-height also in Thunderbird, and Yahoo!, Outlook.com, AOL webmail clients */
             /*line-height: 38px;*/
         }
