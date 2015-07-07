@@ -13,7 +13,7 @@
             margin: 0;
             font-family: 'Signika', sans-serif;
             box-sizing: border-box;
-            font-size: 14px;
+            font-size: 18px;
         }
 
         img {
@@ -106,7 +106,7 @@
         }
 
         h1 {
-            font-size: 24px;
+            font-size: 27px;
             font-weight: 500;
             line-height: 34px;
             /* 1.2em * 32px = 38.4px, use px to get airier line-height also in Thunderbird, and Yahoo!, Outlook.com, AOL webmail clients */
@@ -133,6 +133,10 @@
         p, ul, ol {
             margin-bottom: 10px;
             font-weight: normal;
+        }
+
+        i {
+            font-size: 14px;
         }
 
         p li, ul li, ol li {
@@ -192,64 +196,26 @@
             clear: both;
         }
 
-        /* -------------------------------------
-            ALERTS
-            Change the class depending on warning email, good email or bad email
-        ------------------------------------- */
-        .alert {
-            font-size: 16px;
-            color: #fff;
-            font-weight: 500;
-            padding: 20px;
-            text-align: center;
-            border-radius: 3px 3px 0 0;
+        .copyright, .unsubscribe {
+            padding: 20px 40px 20px 20px;
         }
 
-        .alert a {
-            color: #fff;
+        .copyright a {
+            font-size: 15px;
+            color: white;
+        }
+
+        .copyright a:link, .copyright a:visited, .unsubscribe a:visited, .unsubscribe a:link {
             text-decoration: none;
-            font-weight: 500;
-            font-size: 16px;
         }
 
-        .alert.alert-warning {
-            background-color: #FF9F00;
+        .copyright a:hover, .unsubscribe a:hover {
+            text-decoration: underline;
         }
 
-        .alert.alert-bad {
-            background-color: #D0021B;
-        }
-
-        .alert.alert-good {
-            background-color: #68B90F;
-        }
-
-        /* -------------------------------------
-            INVOICE
-            Styles for the billing table
-        ------------------------------------- */
-        .invoice {
-            margin: 40px auto;
-            text-align: left;
-            width: 80%;
-        }
-
-        .invoice td {
-            padding: 5px 0;
-        }
-
-        .invoice .invoice-items {
-            width: 100%;
-        }
-
-        .invoice .invoice-items td {
-            border-top: #eee 1px solid;
-        }
-
-        .invoice .invoice-items .total td {
-            border-top: 2px solid #333;
-            border-bottom: 2px solid #333;
-            font-weight: 700;
+        .unsubscribe a {
+            font-size: 14px;
+            color: white;
         }
 
         /* -------------------------------------
@@ -258,6 +224,7 @@
         @media only screen and (max-width: 640px) {
             body {
                 padding: 0 !important;
+                font-size: 14px;
             }
 
             h1, h2, h3, h4 {
@@ -290,9 +257,6 @@
 
             }
 
-            .invoice {
-                width: 100% !important;
-            }
         }
     </style>
 </head>
@@ -304,9 +268,10 @@
         <td></td>
         <td class="container" width="600">
             <div class="content">
-                <table class="main" width="100%" cellpadding="0" cellspacing="0" style="background-image: url(http://project.locator-app.com/img/mailassets/debut_light.png)" >
+                <table class="main" width="100%" cellpadding="0" cellspacing="0"
+                       style="background-image: url(http://project.locator-app.com/img/mailassets/debut_light.png)">
                     <tr>
-                        <td class="content-wrap">
+                        <td class="content-wrap">&nbsp;
                             <table width="100%" cellpadding="0" cellspacing="0">
                                 <!-- HEADER -->
                                 <tr>
@@ -322,6 +287,7 @@
 
                                     </td>
                                 </tr>
+                                <br/>
                                 <!-- BODY -->
                                 <tr>
                                     <td class="content-block">
@@ -329,6 +295,7 @@
                                             <tr>
                                                 <td valign="top" align="left">
                                                     <h1 align="left">Ahoi <%= name %>,<br> Willkommen bei Locator!</h1>
+                                                    <br/>
 
                                                     Wir freuen uns wirklich, wirklich, wirklich sehr, dass du bei diesem
                                                     Projekt <a href="http://locator-app.com">locator-app.com</a>
@@ -368,7 +335,7 @@
                                                              alt="instagram"></a>
                                                 </td>
                                                 <td valign="top" align="center">
-                                                    <a href=https://www.facebook.com/locator.kn">
+                                                    <a href="https://www.facebook.com/locator.kn">
                                                         <img width="40"
                                                              src="http://141.37.31.49/img/mailassets/facebook_black.png"
                                                              alt="instagram"></a>
@@ -394,16 +361,12 @@
                                     <td align="center" valign="top">
                                         <table border="0" cellpadding="0" cellspacing="0" width="100%" bgcolor="#000">
                                             <tr>
-                                                <td valign="top" align="left">
-
-                                                    <br><br>
+                                                <td valign="top" align="left" class="copyright">
 
                                                     <a href="http://project.locator-app.com">Copyright © 2015 by
                                                         locator-app.com</a>
                                                 </td>
-                                                <td valign="top" align="left">
-                                                    <br><br>
-
+                                                <td valign="top" align="left" class="unsubscribe">
                                                     <a href="http://project.locator-app.com/mail/unsubscribe/<%= mail %">unsubscribe</a>   
                                                 </td>
                                             </tr>
