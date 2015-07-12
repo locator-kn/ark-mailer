@@ -67,7 +67,8 @@ class Mailer {
     exportApi(server) {
         server.expose('sendRegistrationMail', this.sendRegistrationMail);
         server.expose('sendPasswordForgottenMail', this.sendPasswordForgottenMail);
-        server.expose('sendRegistrationMailWithPassword', this.sendRegistrationMailWithPassword)
+        server.expose('sendRegistrationMailWithPassword', this.sendRegistrationMailWithPassword);
+        server.expose('sendRegistrationMailWithoutUuid', this.sendRegistrationMailWithoutUuid);
     }
 
     register:IRegister = (server, options, next) => {
@@ -95,13 +96,14 @@ class Mailer {
         // get mail
         this.getRenderedMail(this.REGISTRATION_MAIL, {
                 'mail': user.mail,
-                'name': user.name
+                'name': user.name,
+                'uuid': user.uuid
             }
         ).then(mail => {
                 var data = {
                     from: this.mailOptions.from,
                     to: user.mail,
-                    subject: 'howdy ' + user.name + '!',
+                    subject: 'Ahoi ' + user.name + '!',
                     html: mail
                 };
 
@@ -118,6 +120,9 @@ class Mailer {
 
     };
 
+    sendRegistrationMailWithoutUuid = (user, mail) => {
+
+    };
 
     sendPasswordForgottenMail = (user) => {
 
@@ -160,6 +165,7 @@ class Mailer {
                     html: mail
                 };
 
+                // send mail
                 this.mailgun.messages().send(data, (err, result) => {
                     if (err) {
                         console.error('Error while sending registration with password', err);
