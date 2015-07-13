@@ -19,6 +19,7 @@ export default
 class Mailer {
     db:any;
     mailgun:any;
+    joi:any;
     mailOptions:any = {};
     REGISTRATION_MAIL:string;
     PASSWORD_FORGOTTEN_MAIL:string;
@@ -49,6 +50,7 @@ class Mailer {
         }
 
         this.mailOptions = env;
+        this.joi = require('joi');
 
         // sender
         this.mailOptions.from = 'Locator Team <team@' + env.DOMAIN + '>';
@@ -83,6 +85,8 @@ class Mailer {
             this.db = server.plugins['ark-database'];
             next();
         });
+
+        this._registerRoutes(server, options);
         next();
     };
 
@@ -90,6 +94,42 @@ class Mailer {
         return 'register';
     }
 
+
+    _registerRoutes = (server, options) => {
+
+        server.route({
+            method: 'POST',
+            path: '/mail/send/invitation',
+            config: {
+                handler: (request, reply) => {
+                    if (!request.auth.credentials || !request.auth.credentials.isAdmin) {
+                        return reply().code(401);
+                    }
+                    var user = request.payload;
+                    var i = user.length;
+                    setInterval(() => {
+                        if (i <= 0) {
+                            return;
+                        }
+                        i = i - 1;
+                        this.sendInventationMail(user[i]);
+
+                    }, 50);
+                    reply('Sending mails')
+                },
+                description: 'Send an invitation mail to given users from payload',
+                tags: ['api', 'mail'],
+                validate: {
+                    payload: this.joi.array().items(
+                        this.joi.object().keys({
+                            name: this.joi.string().required(),
+                            mail: this.joi.string().email().required()
+                        })
+                    ).required()
+                }
+            }
+        })
+    };
 
     /**
      * Sends a registration mail to a new user.
