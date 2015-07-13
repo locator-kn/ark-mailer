@@ -102,6 +102,8 @@ class Mailer {
             path: '/mail/send/invitation',
             config: {
                 handler: (request, reply) => {
+
+                    return reply('not available any more')
                     if (!request.auth.credentials || !request.auth.credentials.isAdmin) {
                         return reply().code(401);
                     }
@@ -120,7 +122,7 @@ class Mailer {
                         // send mail
                         this.sendInventationMail(user[i]);
 
-                    }, 50);
+                    }, 1000);
 
                     // async reply
                     reply('Sending mails')
@@ -185,7 +187,7 @@ class Mailer {
                 var data = {
                     from: this.mailOptions.from,
                     to: user.mail,
-                    subject: 'Locator läd ein!',
+                    subject: 'Einladung zur Release-Party! | Locator',
                     html: mail
                 };
 
