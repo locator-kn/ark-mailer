@@ -13,7 +13,7 @@ export interface IUserMail {
 // filesystem & utility
 var fs = require('fs');
 var _ = require('lodash');
-var path = require('path')
+var path = require('path');
 
 export default
 class Mailer {
@@ -23,6 +23,7 @@ class Mailer {
     REGISTRATION_MAIL:string;
     PASSWORD_FORGOTTEN_MAIL:string;
     REGISTRATION_MAIL_WITH_PASSWORT:string;
+    INVENTATION_MAIL:string;
 
     /**
      * constructor with env variable
@@ -57,6 +58,7 @@ class Mailer {
         this.REGISTRATION_MAIL = path.resolve(__dirname, './templates/registration.html');
         this.PASSWORD_FORGOTTEN_MAIL = path.resolve(__dirname, './templates/passwordForget.html');
         this.REGISTRATION_MAIL_WITH_PASSWORT = path.resolve(__dirname, './templates/registrationWithPassword.html');
+        this.INVENTATION_MAIL = path.resolve(__dirname, './templates/inventationMail.html');
 
     }
 
@@ -69,6 +71,7 @@ class Mailer {
         server.expose('sendPasswordForgottenMail', this.sendPasswordForgottenMail);
         server.expose('sendRegistrationMailWithPassword', this.sendRegistrationMailWithPassword);
         server.expose('sendRegistrationMailWithoutUuid', this.sendRegistrationMailWithoutUuid);
+        server.expose('sendInventationMail', this.sendInventationMail);
     }
 
     register:IRegister = (server, options, next) => {
@@ -113,6 +116,37 @@ class Mailer {
                         return
                     }
                     console.log('registration send to ', user)
+                })
+
+            }
+        ).catch(err => console.error(err));
+
+    };
+
+    /**
+     * Sends a inventation mail to all pre registered users.
+     * @param user
+     */
+    sendInventationMail = (user) => {
+        // get mail
+        this.getRenderedMail(this.INVENTATION_MAIL, {
+                'mail': user.mail,
+                'name': user.name,
+            }
+        ).then(mail => {
+                var data = {
+                    from: this.mailOptions.from,
+                    to: user.mail,
+                    subject: 'Ahoi ' + user.name + '!',
+                    html: mail
+                };
+
+                this.mailgun.messages().send(data, (err, result) => {
+                    if (err) {
+                        console.error('Error while sending inventation', err);
+                        return
+                    }
+                    console.log('inventation send to ', user)
                 })
 
             }
