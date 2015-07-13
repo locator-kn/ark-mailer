@@ -112,9 +112,17 @@ class Mailer {
                             return;
                         }
                         i = i - 1;
+
+                        // capitalize first character of name
+                        var name = user[i].name;
+                        user[i].name = name.charAt(0).toUpperCase() + name.slice(1);
+
+                        // send mail
                         this.sendInventationMail(user[i]);
 
                     }, 50);
+
+                    // async reply
                     reply('Sending mails')
                 },
                 description: 'Send an invitation mail to given users from payload',
