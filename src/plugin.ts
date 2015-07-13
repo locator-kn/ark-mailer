@@ -185,7 +185,7 @@ class Mailer {
                 var data = {
                     from: this.mailOptions.from,
                     to: user.mail,
-                    subject: 'Ahoi ' + user.name + '!',
+                    subject: 'Locator läd ein!',
                     html: mail
                 };
 
