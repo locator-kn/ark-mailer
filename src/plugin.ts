@@ -24,7 +24,8 @@ class Mailer {
         PASSWORD_FORGOTTEN_MAIL: path.resolve(__dirname, './templates/passwordForget.html'),
         REGISTRATION_MAIL_WITH_PASSWORT: path.resolve(__dirname, './templates/registrationWithPassword.html'),
         INVENTATION_MAIL: path.resolve(__dirname, './templates/inventationMail.html'),
-        TRIP_INTEREST_FOR_YOU: path.resolve(__dirname, './templates/tripInterestYou.html')
+        TRIP_INTEREST_FOR_YOU: path.resolve(__dirname, './templates/tripInterestYou.html'),
+        TRIP_INTEREST_FOR_ME: path.resolve(__dirname, './templates/tripsInterestMe.html')
     };
 
     /**
@@ -70,6 +71,7 @@ class Mailer {
         server.expose('sendRegistrationMailWithoutUuid', this.mailer.sendRegistrationMailWithoutUuid);
         server.expose('sendInventationMail', this.mailer.sendInventationMail);
         server.expose('sendTripInterestMail', this.mailer.sendTripInterestMail);
+        server.expose('sendTripInterestMailToMe', this.mailer.sendTripInterestMailToMe);
     }
 
     register:IRegister = (server, options, next) => {

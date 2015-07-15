@@ -92,14 +92,17 @@ export default class MailSender {
 
     };
 
-    sendTripInterestMailToMe = (user) => {
+    sendTripInterestMailToMe = (send, rec, tripTitle, conversationID) => {
         // get mail
         this.getRenderedMail(this.mails.TRIP_INTEREST_FOR_ME, {
-                'mail': user.mail,
-                'name': user.name,
+                name: rec.name,
+                opponent: send.name,
+                tripTitle: tripTitle,
+                conversationID: conversationID,
+                profilePictureUrl: send.picture,
             }
         ).then(mail => {
-                this._sendMailToMailgun(user, mail, 'Ahoi ' + user.name + '!');
+                this._sendMailToMailgun(rec, mail, 'Ahoi ' + rec.name + '!');
             }
         ).catch(err => console.error(err));
     };
