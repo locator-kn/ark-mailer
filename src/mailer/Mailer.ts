@@ -14,10 +14,10 @@ export default class MailSender {
      */
     sendRegistrationMail = (user) => {
         // get mail
+        // NOTE: There is no uuid in the first version of locator
         this.getRenderedMail(this.mails.REGISTRATION_MAIL, {
                 'mail': user.mail,
-                'name': user.name,
-                'uuid': user.uuid
+                'name': user.name
             }
         ).then(mail => {
                 this._sendMailToMailgun(user, mail, 'Ahoi ' + user.name + '!');
@@ -43,8 +43,9 @@ export default class MailSender {
 
     };
 
-    sendRegistrationMailWithoutUuid = (user, mail) => {
-
+    sendRegistrationMailWithoutUuid = (user) => {
+        // send normal registration since there is no uuid in the first versions
+        this.sendRegistrationMail(user);
     };
 
     sendPasswordForgottenMail = (user) => {
@@ -73,6 +74,34 @@ export default class MailSender {
             }
         ).catch(err => console.error(err));
 
+    };
+
+    sendTripInterestMail = (send, rec, tripTitle, conversationID) => {
+        // get mail
+        this.getRenderedMail(this.mails.TRIP_INTEREST_FOR_YOU, {
+                name: rec.name,
+                opponent: send.name,
+                tripTitle: tripTitle,
+                conversationID: conversationID,
+                profilePictureUrl: send.picture,
+            }
+        ).then(mail => {
+                this._sendMailToMailgun(rec, mail, 'Ahoi ' + rec.name + '!');
+            }
+        ).catch(err => console.error(err));
+
+    };
+
+    sendTripInterestMailToMe = (user) => {
+        // get mail
+        this.getRenderedMail(this.mails.TRIP_INTEREST_FOR_ME, {
+                'mail': user.mail,
+                'name': user.name,
+            }
+        ).then(mail => {
+                this._sendMailToMailgun(user, mail, 'Ahoi ' + user.name + '!');
+            }
+        ).catch(err => console.error(err));
     };
 
     getRenderedMail = (mail:String, user) => {
