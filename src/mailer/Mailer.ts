@@ -77,13 +77,14 @@ export default class MailSender {
     };
 
     sendTripInterestMail = (send, rec, tripTitle, conversationID) => {
+        var picUrl = send.picture || '/img/mailassets/profile.png';
         // get mail
         this.getRenderedMail(this.mails.TRIP_INTEREST_FOR_YOU, {
                 name: rec.name,
                 opponent: send.name,
                 tripTitle: tripTitle,
                 conversationID: conversationID,
-                profilePictureUrl: send.picture,
+                profilePictureUrl: 'http://locator-app.com' + picUrl,
             }
         ).then(mail => {
                 this._sendMailToMailgun(rec, mail, 'Ahoi ' + rec.name + '!');
@@ -93,13 +94,14 @@ export default class MailSender {
     };
 
     sendTripInterestMailToMe = (send, rec, tripTitle, conversationID) => {
+        var picUrl = send.picture || '/img/mailassets/profile.png';
         // get mail
         this.getRenderedMail(this.mails.TRIP_INTEREST_FOR_ME, {
                 name: rec.name,
                 opponent: send.name,
                 tripTitle: tripTitle,
                 conversationID: conversationID,
-                profilePictureUrl: send.picture,
+                profilePictureUrl: 'http://locator-app.com' + picUrl,
             }
         ).then(mail => {
                 this._sendMailToMailgun(rec, mail, 'Ahoi ' + rec.name + '!');
