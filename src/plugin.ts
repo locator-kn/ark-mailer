@@ -1,4 +1,4 @@
-declare var Promise;
+import MailSender from './mailer/mailer';
 export interface IRegister {
     (server:any, options:any, next:any): void;
     attributes?: any;
@@ -11,18 +11,22 @@ export interface IUserMail {
 }
 
 // filesystem & utility
-var fs = require('fs');
-var _ = require('lodash');
-var path = require('path')
+var path = require('path');
 
 export default
 class Mailer {
     db:any;
-    mailgun:any;
-    mailOptions:any = {};
-    REGISTRATION_MAIL:string;
-    PASSWORD_FORGOTTEN_MAIL:string;
-    REGISTRATION_MAIL_WITH_PASSWORT:string;
+    joi:any;
+    mailer:any;
+
+    private MAILS = {
+        REGISTRATION_MAIL: path.resolve(__dirname, './templates/registration.html'),
+        PASSWORD_FORGOTTEN_MAIL: path.resolve(__dirname, './templates/passwordForget.html'),
+        REGISTRATION_MAIL_WITH_PASSWORT: path.resolve(__dirname, './templates/registrationWithPassword.html'),
+        INVENTATION_MAIL: path.resolve(__dirname, './templates/inventationMail.html'),
+        TRIP_INTEREST_FOR_YOU: path.resolve(__dirname, './templates/tripInterestYou.html'),
+        TRIP_INTEREST_FOR_ME: path.resolve(__dirname, './templates/tripInterestMe.html')
+    };
 
     /**
      * constructor with env variable
@@ -47,17 +51,13 @@ class Mailer {
             throw new Error('env is required');
         }
 
-        this.mailOptions = env;
-
+        this.joi = require('joi');
         // sender
-        this.mailOptions.from = 'Locator Team <team@' + env.DOMAIN + '>';
+        var mailOptions = env;
+        mailOptions.from = 'Locator Team <team@' + env.DOMAIN + '>';
+        var mailgun = require('mailgun-js')({apiKey: env.API_KEY, domain: env.DOMAIN});
 
-        this.mailgun = require('mailgun-js')({apiKey: env.API_KEY, domain: env.DOMAIN});
-
-        this.REGISTRATION_MAIL = path.resolve(__dirname, './templates/registration.html');
-        this.PASSWORD_FORGOTTEN_MAIL = path.resolve(__dirname, './templates/passwordForget.html');
-        this.REGISTRATION_MAIL_WITH_PASSWORT = path.resolve(__dirname, './templates/registrationWithPassword.html');
-
+        this.mailer = new MailSender(mailgun, mailOptions, this.MAILS);
     }
 
     /**
@@ -65,9 +65,13 @@ class Mailer {
      * @param server
      */
     exportApi(server) {
-        server.expose('sendRegistrationMail', this.sendRegistrationMail);
-        server.expose('sendPasswordForgottenMail', this.sendPasswordForgottenMail);
-        server.expose('sendRegistrationMailWithPassword', this.sendRegistrationMailWithPassword)
+        server.expose('sendRegistrationMail', this.mailer.sendRegistrationMail);
+        server.expose('sendPasswordForgottenMail', this.mailer.sendPasswordForgottenMail);
+        server.expose('sendRegistrationMailWithPassword', this.mailer.sendRegistrationMailWithPassword);
+        server.expose('sendRegistrationMailWithoutUuid', this.mailer.sendRegistrationMailWithoutUuid);
+        server.expose('sendInventationMail', this.mailer.sendInventationMail);
+        server.expose('sendTripInterestMail', this.mailer.sendTripInterestMail);
+        server.expose('sendTripInterestMailToMe', this.mailer.sendTripInterestMailToMe);
     }
 
     register:IRegister = (server, options, next) => {
@@ -79,6 +83,8 @@ class Mailer {
             this.db = server.plugins['ark-database'];
             next();
         });
+
+        this._registerRoutes(server, options);
         next();
     };
 
@@ -87,105 +93,51 @@ class Mailer {
     }
 
 
-    /**
-     * Sends a registration mail to a new user.
-     * @param user
-     */
-    sendRegistrationMail = (user:IUserMail) => {
-        // get mail
-        this.getRenderedMail(this.REGISTRATION_MAIL, {
-                'mail': user.mail,
-                'name': user.name
-            }
-        ).then(mail => {
-                var data = {
-                    from: this.mailOptions.from,
-                    to: user.mail,
-                    subject: 'howdy ' + user.name + '!',
-                    html: mail
-                };
+    _registerRoutes = (server, options) => {
 
-                this.mailgun.messages().send(data, (err, result) => {
-                    if (err) {
-                        console.error('Error while sending registration', err);
-                        return
+        server.route({
+            method: 'POST',
+            path: '/mail/send/invitation',
+            config: {
+                handler: (request, reply) => {
+
+                    return reply('not available any more');
+                    if (!request.auth.credentials || !request.auth.credentials.isAdmin) {
+                        return reply().code(401);
                     }
-                    console.log('registration send to ', user)
-                })
+                    var user = request.payload;
+                    var i = user.length;
+                    setInterval(() => {
+                        if (i <= 0) {
+                            return;
+                        }
+                        i = i - 1;
 
-            }
-        ).catch(err => console.error(err));
+                        // capitalize first character of name
+                        var name = user[i].name;
+                        user[i].name = name.charAt(0).toUpperCase() + name.slice(1);
 
-    };
+                        // send mail
+                        this.mailer.sendInventationMail(user[i]);
 
+                    }, 1000);
 
-    sendPasswordForgottenMail = (user) => {
-
-        this.getRenderedMail(this.PASSWORD_FORGOTTEN_MAIL, {
-                'mail': user.mail,
-                'name': user.name,
-                'password': user.resetPassword
-            }
-        ).then(mail => {
-                var data = {
-                    from: this.mailOptions.from,
-                    to: user.mail,
-                    subject: 'howdy ' + user.name + '!',
-                    html: mail
-                };
-                this.mailgun.messages().send(data, (err, result) => {
-                    if (err) {
-                        console.error('Error while sending password', err);
-                        return
-                    }
-                    console.log('password send to ', user)
-                })
-            }
-        ).catch(err => console.error(err));
-
-    };
-
-    sendRegistrationMailWithPassword = (user) => {
-        // get mail
-        this.getRenderedMail(this.REGISTRATION_MAIL_WITH_PASSWORT, {
-                'mail': user.mail,
-                'name': user.name,
-                'password': user.password
-            }
-        ).then(mail => {
-                var data = {
-                    from: this.mailOptions.from,
-                    to: user.mail,
-                    subject: 'howdy ' + user.name + '!',
-                    html: mail
-                };
-
-                this.mailgun.messages().send(data, (err, result) => {
-                    if (err) {
-                        console.error('Error while sending registration with password', err);
-                        return
-                    }
-                    console.log('registration with password send to ', user)
-                })
-
-            }
-        ).catch(err => console.error(err));
-
-    };
-
-    getRenderedMail = (mail:String, user) => {
-        return new Promise((resolve, reject)=> {
-            fs.readFile(mail, 'utf-8', (err, template) => {
-                if (err) {
-                    return reject('Unable to read mail template');
+                    // async reply
+                    reply('Sending mails')
+                },
+                description: 'Send an invitation mail to given users from payload',
+                tags: ['api', 'mail'],
+                validate: {
+                    payload: this.joi.array().items(
+                        this.joi.object().keys({
+                            name: this.joi.string().required(),
+                            mail: this.joi.string().email().required()
+                        })
+                    ).required()
                 }
-
-                var compiled = _.template(template);
-                var renderedMail = compiled(user);
-
-                resolve(renderedMail);
-
-            });
-        });
+            }
+        })
     };
+
+
 }

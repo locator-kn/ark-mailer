@@ -1,6 +1,6 @@
 {
   "name": "ark-mailer",
-  "version": "1.4.0",
+  "version": "2.3.2",
   "description": "Mail notification service",
   "main": "index.js",
   "scripts": {
@@ -26,6 +26,7 @@
     "node-notifier": "^4.1.2"
   },
   "dependencies": {
+    "joi": "^6.5.0",
     "lodash": "^3.9.3",
     "mailgun-js": "^0.7.0",
     "path": "^0.11.14",
