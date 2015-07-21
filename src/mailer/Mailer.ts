@@ -1,4 +1,4 @@
-declare var Promise
+declare var Promise;
 var fs = require('fs');
 var _ = require('lodash');
 export default class MailSender {
@@ -34,7 +34,7 @@ export default class MailSender {
         // get mail
         this.getRenderedMail(this.mails.INVENTATION_MAIL, {
                 'mail': user.mail,
-                'name': user.name,
+                'name': user.name
             }
         ).then(mail => {
                 this._sendMailToMailgun(user, mail, 'Einladung zur Release-Party! | Locator');
@@ -84,7 +84,7 @@ export default class MailSender {
                 opponent: send.name,
                 tripTitle: tripTitle,
                 conversationID: conversationID,
-                profilePictureUrl: 'http://locator-app.com' + picUrl,
+                profilePictureUrl: 'http://locator-app.com' + picUrl
             }
         ).then(mail => {
                 this._sendMailToMailgun(rec, mail, 'Ahoi ' + rec.name + '!');
@@ -101,7 +101,7 @@ export default class MailSender {
                 opponent: send.name,
                 tripTitle: tripTitle,
                 conversationID: conversationID,
-                profilePictureUrl: 'http://locator-app.com' + picUrl,
+                profilePictureUrl: 'http://locator-app.com' + picUrl
             }
         ).then(mail => {
                 this._sendMailToMailgun(rec, mail, 'Ahoi ' + rec.name + '!');
@@ -140,6 +140,6 @@ export default class MailSender {
                 return
             }
             console.log('mail send to ', user)
-        })
+        });
     }
 }
