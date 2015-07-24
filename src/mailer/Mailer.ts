@@ -77,14 +77,18 @@ export default class MailSender {
     };
 
     sendTripInterestMail = (send, rec, tripTitle, conversationID) => {
-        var picUrl = send.picture || '/img/mailassets/profile.png';
-        // get mail
+        var picUrl;
+        if (send.picture) {
+            picUrl = 'https://locator-app.com' + send.picture;
+        } else {
+            picUrl = 'https://project.locator-app.com/img/mailassets/profile.png';
+        }
         this.getRenderedMail(this.mails.TRIP_INTEREST_FOR_YOU, {
                 name: rec.name,
                 opponent: send.name,
                 tripTitle: tripTitle,
                 conversationID: conversationID,
-                profilePictureUrl: 'https://locator-app.com' + picUrl
+                profilePictureUrl: picUrl
             }
         ).then(mail => {
                 this._sendMailToMailgun(rec, mail, 'Ahoi ' + rec.name + '!');
@@ -94,14 +98,19 @@ export default class MailSender {
     };
 
     sendTripInterestMailToMe = (send, rec, tripTitle, conversationID) => {
-        var picUrl = send.picture || '/img/mailassets/profile.png';
+        var picUrl;
+        if (send.picture) {
+            picUrl = 'https://locator-app.com' + send.picture;
+        } else {
+            picUrl = 'https://project.locator-app.com/img/mailassets/profile.png';
+        }
         // get mail
         this.getRenderedMail(this.mails.TRIP_INTEREST_FOR_ME, {
                 name: rec.name,
                 opponent: send.name,
                 tripTitle: tripTitle,
                 conversationID: conversationID,
-                profilePictureUrl: 'https://locator-app.com' + picUrl
+                profilePictureUrl: picUrl
             }
         ).then(mail => {
                 this._sendMailToMailgun(rec, mail, 'Ahoi ' + rec.name + '!');
