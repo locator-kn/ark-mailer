@@ -84,7 +84,7 @@ export default class MailSender {
                 opponent: send.name,
                 tripTitle: tripTitle,
                 conversationID: conversationID,
-                profilePictureUrl: 'http://locator-app.com' + picUrl
+                profilePictureUrl: 'https://locator-app.com' + picUrl
             }
         ).then(mail => {
                 this._sendMailToMailgun(rec, mail, 'Ahoi ' + rec.name + '!');
@@ -101,7 +101,7 @@ export default class MailSender {
                 opponent: send.name,
                 tripTitle: tripTitle,
                 conversationID: conversationID,
-                profilePictureUrl: 'http://locator-app.com' + picUrl
+                profilePictureUrl: 'https://locator-app.com' + picUrl
             }
         ).then(mail => {
                 this._sendMailToMailgun(rec, mail, 'Ahoi ' + rec.name + '!');
