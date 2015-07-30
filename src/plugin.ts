@@ -107,8 +107,9 @@ class Mailer {
                     }
                     var user = request.payload;
                     var i = user.length;
-                    setInterval(() => {
+                    var intervalId = setInterval(() => {
                         if (i <= 0) {
+                            clearInterval(intervalId)
                             return;
                         }
                         i = i - 1;
