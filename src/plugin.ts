@@ -76,7 +76,6 @@ class Mailer {
 
     register:IRegister = (server, options, next) => {
         server.bind(this);
-        this._register(server, options);
         this.exportApi(server);
 
         server.dependency('ark-database', (server, next) => {
@@ -85,13 +84,54 @@ class Mailer {
         });
 
         this._registerRoutes(server, options);
+        this._registerSeneca(server, options);
         next();
     };
 
-    private _register(server, options) {
-        return 'register';
-    }
+    private _registerSeneca(server, options) {
 
+        if (!server.seneca) {
+            throw new Error('Server is missing Chairo Plugin');
+        }
+
+        server.seneca.add({send: 'sendRegistrationMailWithoutUuid'}, (message, next)=> {
+
+            var newUser = message.user;
+            this.mailer.sendRegistrationMailWithoutUuid({
+                name: newUser.name,
+                mail: newUser.mail,
+            });
+            return next(null, {ok: true});
+        });
+
+        server.seneca.add({send: 'registrationMail'}, (message, next)=> {
+
+            var newUser = message.user;
+            this.mailer.sendRegistrationMail({
+                name: newUser.name,
+                mail: newUser.mail,
+                uuid: newUser.uuid
+            });
+            return next(null, {ok: true});
+        });
+
+        server.seneca.add({send: 'sendRegistrationMailWithPassword'}, (message, next)=> {
+            var user = message.user;
+
+            if (!user || !user.newPassword || !user.mail || !user.name) {
+                return next({error: 'user is not well defined'})
+            }
+            // send welcome mail
+            this.mailer.sendRegistrationMailWithPassword({
+                name: user.name,
+                mail: user.mail,
+                password: user.newPassword
+            });
+            return next(null, {ok: true});
+        });
+
+
+    }
 
     _registerRoutes = (server, options) => {
 
