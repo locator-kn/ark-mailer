@@ -1,6 +1,6 @@
 {
   "name": "ark-mailer",
-  "version": "2.3.8",
+  "version": "2.3.9",
   "description": "Mail notification service",
   "main": "index.js",
   "scripts": {
@@ -8,7 +8,7 @@
     "postinstall": "tsd reinstall && gulp ts && gulp template"
   },
   "peerDependencies": {
-    "hapi": ">=8.x.x"
+    "hapi": ">=9.x.x"
   },
   "repository": "git:locator-kn/ark-mailer.git",
   "devDependencies": {
