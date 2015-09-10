@@ -81,7 +81,7 @@ export default class MailSender {
         if (send.picture) {
             picUrl = 'https://locator-app.com' + send.picture;
         } else {
-            picUrl = 'https://project.locator-app.com/img/mailassets/profile.png';
+            picUrl = 'http://project.locator-app.com/img/mailassets/profile.png';
         }
         this.getRenderedMail(this.mails.TRIP_INTEREST_FOR_YOU, {
                 name: rec.name,
@@ -102,7 +102,7 @@ export default class MailSender {
         if (send.picture) {
             picUrl = 'https://locator-app.com' + send.picture;
         } else {
-            picUrl = 'https://project.locator-app.com/img/mailassets/profile.png';
+            picUrl = 'http://project.locator-app.com/img/mailassets/profile.png';
         }
         // get mail
         this.getRenderedMail(this.mails.TRIP_INTEREST_FOR_ME, {
